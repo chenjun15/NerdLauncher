@@ -59,11 +59,11 @@ public class NerdLauncherFragment extends Fragment {
         mRecyclerView.setAdapter(new ActivityAdapter(activities));
     }
 
-    private class ActivtyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class ActivityHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ResolveInfo mResolveInfo;
         private TextView mNameTextView;
 
-        public ActivtyHolder(@NonNull View itemView) {
+        public ActivityHolder(@NonNull View itemView) {
             super(itemView);
             mNameTextView = (TextView) itemView;
             mNameTextView.setOnClickListener(this);
@@ -82,13 +82,13 @@ public class NerdLauncherFragment extends Fragment {
 
             Intent i = new Intent(Intent.ACTION_MAIN)
                     .setClassName(activityInfo.applicationInfo.packageName, activityInfo.name)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);   // 启动新activity时启动新任务
 
             startActivity(i);
         }
     }
 
-    private class ActivityAdapter extends RecyclerView.Adapter<ActivtyHolder> {
+    private class ActivityAdapter extends RecyclerView.Adapter<ActivityHolder> {
         private final List<ResolveInfo> mActivities;
 
         private ActivityAdapter(List<ResolveInfo> activities) {
@@ -97,14 +97,14 @@ public class NerdLauncherFragment extends Fragment {
 
         @NonNull
         @Override
-        public ActivtyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ActivityHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-            return new ActivtyHolder(view);
+            return new ActivityHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ActivtyHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ActivityHolder holder, int position) {
             ResolveInfo resolveInfo = mActivities.get(position);
             holder.bindActivity(resolveInfo);
         }
