@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -59,19 +61,25 @@ public class NerdLauncherFragment extends Fragment {
         mRecyclerView.setAdapter(new ActivityAdapter(activities));
     }
 
-    private class ActivtyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class ActivityHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ResolveInfo mResolveInfo;
+        private ImageView mIconImageView;
         private TextView mNameTextView;
 
-        public ActivtyHolder(@NonNull View itemView) {
+        public ActivityHolder(@NonNull View itemView) {
             super(itemView);
-            mNameTextView = (TextView) itemView;
+            mIconImageView = itemView.findViewById(R.id.app_icon);
+            mIconImageView.setOnClickListener(this);
+            mNameTextView = itemView.findViewById(R.id.app_name_tv);
             mNameTextView.setOnClickListener(this);
         }
 
         public void bindActivity(ResolveInfo resolveInfo) {
             mResolveInfo = resolveInfo;
             PackageManager pm = getActivity().getPackageManager();
+            Drawable drawable=mResolveInfo.loadIcon(pm);
+            Log.i(TAG, "bindActivity: " + drawable.getMinimumHeight());
+            mIconImageView.setImageDrawable(mResolveInfo.loadIcon(pm));
             String appName = mResolveInfo.loadLabel(pm).toString();
             mNameTextView.setText(appName);
         }
@@ -88,7 +96,7 @@ public class NerdLauncherFragment extends Fragment {
         }
     }
 
-    private class ActivityAdapter extends RecyclerView.Adapter<ActivtyHolder> {
+    private class ActivityAdapter extends RecyclerView.Adapter<ActivityHolder> {
         private final List<ResolveInfo> mActivities;
 
         private ActivityAdapter(List<ResolveInfo> activities) {
@@ -97,14 +105,14 @@ public class NerdLauncherFragment extends Fragment {
 
         @NonNull
         @Override
-        public ActivtyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ActivityHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-            return new ActivtyHolder(view);
+            View view = layoutInflater.inflate(R.layout.list_item_app, parent, false);
+            return new ActivityHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ActivtyHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ActivityHolder holder, int position) {
             ResolveInfo resolveInfo = mActivities.get(position);
             holder.bindActivity(resolveInfo);
         }
